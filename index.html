@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>晚餐吃什麼？ - 100+ 選項版</title>
+    <style>
+        :root {
+            --primary: #0ff;
+            --secondary: #f0f;
+            --bg: #050510;
+            --card-bg: #1a1a2e;
+            --text: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                linear-gradient(45deg, #000000 25%, transparent 25%, transparent 75%, #000000 75%, #000000),
+                linear-gradient(45deg, #000000 25%, transparent 25%, transparent 75%, #000000 75%, #000000);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 裝飾線條 */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        h1 {
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            border: 1px solid var(--primary);
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:focus {
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .btn-main:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        #result-area {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px dashed var(--secondary);
+            border-radius: 10px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            font-size: 2em;
+            color: #fff;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .result-reason {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 15px;
+            font-size: 12px;
+            background: #333;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #555;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>晚餐運算核心</h1>
+    
+    <div class="control-group">
+        <label>預算等級 (Budget)</label>
+        <select id="budget">
+            <option value="1">月底吃土 (150元以下)</option>
+            <option value="2" selected>日常用餐 (150-400元)</option>
+            <option value="3">發薪日/聚餐 (400-1000元)</option>
+            <option value="4">財富自由 (1000元以上)</option>
+        </select>
+    </div>
+
+    <div class="control-group">
+        <label>用餐人數 (Party Size)</label>
+        <select id="people">
+            <option value="1">1人獨享</option>
+            <option value="2">2人世界</option>
+            <option value="4">4人以上聚餐</option>
+        </select>
+    </div>
+
+    <div class="control-group">
+        <label>當下心情 (Vibe)</label>
+        <select id="vibe">
+            <option value="random">隨便，都可以</option>
+            <option value="quick">趕時間 / 快速解決</option>
+            <option value="heavy">想大口吃肉 / 重口味</option>
+            <option value="light">想吃清淡 / 健康點</option>
+            <option value="soup">想喝熱湯</option>
+            <option value="drink">需要酒精 / 氣氛</option>
+            <option value="sweet">想吃甜的當正餐</option>
+        </select>
+    </div>
+
+    <button class="btn-main" onclick="startRecommend()">執行運算</button>
+
+    <div id="result-area">
+        <div class="badge" id="res-tag"></div>
+        <div class="result-title" id="res-name">載入中...</div>
+        <p class="result-reason" id="res-reason"></p>
+    </div>
+    
+    <div class="footer-text">System Ready | 2026 Happy New Year</div>
+</div>
+
+<script>
+    // 預算: 1=便宜, 2=中等, 3=貴, 4=極貴
+    // 人數: 1=適合單人, 2=適合雙人, 4=適合多人
+    // 標籤對應: quick(快), heavy(重口), light(清淡), soup(湯), drink(酒), sweet(甜)
+    
+    const foodDatabase = [
+        // === 台式飯麵類 (庶民美食) ===
+        {name: "滷肉飯 + 燙青菜", budget: 1, people: [1,2,4], tags: ["quick", "heavy"], reason: "台灣人的靈魂，肥瘦相間的快樂。"},
+        {name: "嘉義火雞肉飯", budget: 1, people: [1,2,4], tags: ["quick", "light"], reason: "簡單油蔥香，配個半熟蛋完美。"},
+        {name: "台式自助餐 (便當)", budget: 1, people: [1,2], tags: ["quick", "heavy"], reason: "想吃什麼夾什麼，營養最均衡。"},
+        {name: "排骨飯 / 雞腿飯", budget: 1, people: [1,2], tags: ["quick", "heavy"], reason: "經典炸物主菜，飽足感首選。"},
+        {name: "控肉飯", budget: 1, people: [1,2], tags: ["quick", "heavy"], reason: "那塊三層肉雖然罪惡，但是值得。"},
+        {name: "燒臘飯 (三寶飯)", budget: 1, people: [1,2], tags: ["quick", "heavy"], reason: "叉燒油雞燒鴨，一次滿足三種願望。"},
+        {name: "豬油拌飯 + 白切肉", budget: 1, people: [1,2,4], tags: ["quick", "heavy"], reason: "古早味最對味。"},
+        {name: "海南雞飯", budget: 2, people: [1,2], tags: ["light"], reason: "滑嫩雞肉配上雞油飯，清爽不油膩。"},
+        {name: "咖哩飯 (台式)", budget: 1, people: [1,2], tags: ["quick", "heavy"], reason: "黃色螢光咖哩，從小吃到大的味道。"},
+        {name: "咖哩飯 (日式濃郁)", budget: 2, people: [1,2], tags: ["heavy"], reason: "濃郁辛香，白飯殺手。"},
+        {name: "牛肉麵 (紅燒)", budget: 2, people: [1,2,4], tags: ["soup", "heavy"], reason: "肉大塊湯濃郁，台灣之光。"},
+        {name: "牛肉麵 (清燉)", budget: 2, people: [1,2,4], tags: ["soup", "light"], reason: "湯頭鮮甜，吃出牛肉原味。"},
+        {name: "麻醬麵 + 餛飩湯", budget: 1, people: [1,2], tags: ["quick", "heavy"], reason: "香濃麻醬黏嘴巴的感覺真好。"},
+        {name: "炸醬麵", budget: 1, people: [1,2], tags: ["quick", "heavy"], reason: "鹹香豆干肉末，攪拌均勻大口吃。"},
+        {name: "涼麵 + 三合一湯", budget: 1, people: [1,2], tags: ["quick", "light"], reason: "不管天氣熱不熱，吃這個最快。"},
+        {name: "意麵 / 切仔麵", budget: 1, people: [1,2,4], tags: ["quick", "soup"], reason: "黑白切切幾盤，簡單的一餐。"},
+        {name: "炒飯 (肉絲/蝦仁)", budget: 1, people: [1,2,4], tags: ["quick"], reason: "考驗師傅功力的粒粒分明。"},
+        {name: "炒麵 / 炒米粉", budget: 1, people: [1,2,4], tags: ["quick"], reason: "大火快炒的鍋氣。"},
+        {name: "鴨肉羹 / 魷魚羹", budget: 1, people: [1,2], tags: ["soup", "quick"], reason: "勾芡的甜甜滋味。"},
+        {name: "牛肉湯 + 肉燥飯", budget: 2, people: [1,2], tags: ["soup", "light"], reason: "不用去台南也能享受的奢華早餐/晚餐。"},
+        
+        // === 台式小吃 / 夜市 / 點心 ===
+        {name: "鹹酥雞 / 雞排", budget: 1, people: [1,2,4], tags: ["heavy", "drink"], reason: "這不是晚餐，是信仰。"},
+        {name: "加熱滷味", budget: 1, people: [1,2,4], tags: ["light", "soup"], reason: "吸滿湯汁的王子麵是本體。"},
+        {name: "冷滷味 (乾式)", budget: 1, people: [1,2,4], tags: ["drink", "quick"], reason: "適合買回去配劇吃。"},
+        {name: "臭豆腐 (炸)", budget: 1, people: [1,2,4], tags: ["heavy"], reason: "越臭越香，泡菜要多一點。"},
+        {name: "麻辣臭豆腐 (湯)", budget: 1, people: [1,2,4], tags: ["soup", "heavy"], reason: "喝一口辣湯，全身都暖了。"},
+        {name: "蚵仔煎 / 蝦仁煎", budget: 1, people: [1,2], tags: ["heavy"], reason: "邊邊焦脆的太白粉最好吃。"},
+        {name: "大腸包小腸", budget: 1, people: [1], tags: ["quick", "heavy"], reason: "一套就飽，蒜頭要加爆。"},
+        {name: "肉圓 (蒸/炸)", budget: 1, people: [1], tags: ["quick"], reason: "Q彈外皮配上甜辣醬。"},
+        {name: "刈包 (虎咬豬)", budget: 1, people: [1], tags: ["quick"], reason: "花生粉加酸菜，台式漢堡。"},
+        {name: "潤餅 / 春捲", budget: 1, people: [1], tags: ["light", "quick"], reason: "滿滿蔬菜，感覺比較健康。"},
+        {name: "蔥抓餅 / 蔥油餅", budget: 1, people: [1], tags: ["quick", "heavy"], reason: "加蛋加起司，簡單解決。"},
+        {name: "水餃 (韭菜/高麗菜)", budget: 1, people: [1,2,4], tags: ["quick"], reason: "元寶滾滾來，沾醬油醋蒜泥。"},
+        {name: "鍋貼", budget: 1, people: [1,2], tags: ["quick", "heavy"], reason: "酥脆底皮最迷人。"},
+        {name: "小籠湯包", budget: 2, people: [1,2,4], tags: ["light"], reason: "小心燙口，享受爆漿滋味。"},
+        {name: "永和豆漿 / 豆漿店", budget: 1, people: [1,2,4], tags: ["quick", "light"], reason: "晚上吃早餐，別有一番風味。"},
+        {name: "清粥小菜", budget: 2, people: [2,4], tags: ["light"], reason: "想吃清淡點，配點麵筋肉鬆。"},
+
+        // === 鍋物 / 湯品 (聚餐與暖身) ===
+        {name: "台式涮涮鍋 (小火鍋)", budget: 2, people: [1,2,4], tags: ["soup"], reason: "一人一鍋，不用搶肉。"},
+        {name: "麻辣鴛鴦鍋", budget: 3, people: [2,4], tags: ["soup", "heavy", "drink"], reason: "無辣不歡，鴨血豆腐吃到飽。"},
+        {name: "臭臭鍋 / 三媽類型", budget: 1, people: [1,2], tags: ["soup", "quick"], reason: "便宜大碗，CP值之王。"},
+        {name: "石頭火鍋", budget: 2, people: [2,4], tags: ["soup", "heavy"], reason: "先炒過再煮，香氣逼人。"},
+        {name: "壽喜燒 (吃到飽)", budget: 3, people: [2,4], tags: ["heavy"], reason: "狂吃肉的一天，甜甜醬汁很下飯。"},
+        {name: "羊肉爐", budget: 3, people: [2,4], tags: ["soup", "drink"], reason: "冬天進補首選，藥膳湯頭讚。"},
+        {name: "薑母鴨", budget: 3, people: [2,4], tags: ["soup", "drink"], reason: "碳火加熱才對味，麵線必點。"},
+        {name: "酸菜白肉鍋", budget: 3, people: [4], tags: ["soup", "light"], reason: "酸爽開胃，五花肉片絕配。"},
+        {name: "牛奶鍋 / 起司鍋", budget: 2, people: [1,2,4], tags: ["soup", "heavy"], reason: "濃郁奶香，女生最愛。"},
+        {name: "泰式火鍋", budget: 3, people: [2,4], tags: ["soup", "light"], reason: "酸辣湯頭，開胃解膩。"},
+
+        // === 日式料理 ===
+        {name: "日式拉麵 (豚骨/醬油)", budget: 2, people: [1,2], tags: ["soup", "heavy"], reason: "職人精神的一碗，替玉(加麵)吧！"},
+        {name: "日式沾麵", budget: 2, people: [1,2], tags: ["heavy"], reason: "Q彈粗麵沾濃郁醬汁。"},
+        {name: "迴轉壽司", budget: 2, people: [1,2,4], tags: ["light", "quick"], reason: "盤子疊高高的成就感。"},
+        {name: "生魚片丼飯 (海鮮丼)", budget: 3, people: [1,2], tags: ["light"], reason: "滿滿海味，大海在嘴裡。"},
+        {name: "日式炸豬排定食", budget: 2, people: [1,2,4], tags: ["heavy"], reason: "酥脆麵衣，配上高麗菜絲解膩。"},
+        {name: "牛丼 (吉野家/Sukiya)", budget: 1, people: [1], tags: ["quick", "heavy"], reason: "快速便宜，加顆溫泉蛋。"},
+        {name: "天婦羅 / 天丼", budget: 2, people: [1,2], tags: ["heavy"], reason: "炸蝦炸蔬菜，淋上甜鹹醬汁。"},
+        {name: "日式居酒屋 / 串燒", budget: 3, people: [2,4], tags: ["drink", "heavy"], reason: "下班喝一杯，串燒是配角。"},
+        {name: "大阪燒 / 文字燒", budget: 2, people: [2,4], tags: ["heavy"], reason: "自己動手煎，樂趣無窮。"},
+        {name: "鰻魚飯", budget: 4, people: [1,2], tags: ["heavy"], reason: "偶爾奢華一下，補充精力。"},
+        {name: "日式蕎麥麵 / 烏龍麵", budget: 2, people: [1,2], tags: ["light"], reason: "滑順口感，清爽選擇。"},
+
+        // === 西式 / 美式 / 速食 ===
+        {name: "麥當勞 / 肯德基", budget: 1, people: [1,2,4], tags: ["quick", "heavy"], reason: "快樂肥宅餐，穩定不踩雷。"},
+        {name: "美式漢堡 (手工)", budget: 2, people: [1,2,4], tags: ["heavy"], reason: "肉汁橫流，無法一口咬下的厚度。"},
+        {name: "義大利麵 (白醬/紅醬)", budget: 2, people: [1,2,4], tags: ["heavy"], reason: "最安全的約會/聚餐選擇。"},
+        {name: "披薩 (Pizza)", budget: 2, people: [2,4], tags: ["heavy"], reason: "起司牽絲，適合分享。"},
+        {name: "牛排 (台式鐵板)", budget: 2, people: [1,2,4], tags: ["heavy"], reason: "滋滋作響，紅茶玉米濃湯喝到飽。"},
+        {name: "高級牛排 (西式)", budget: 4, people: [2], tags: ["heavy", "drink"], reason: "慶祝節日，享受熟成風味。"},
+        {name: "早午餐 (Brunch)", budget: 2, people: [2,4], tags: ["light"], reason: "晚上吃蛋捲吐司，假裝還在放假。"},
+        {name: "Subway / 潛艇堡", budget: 2, people: [1], tags: ["quick", "light"], reason: "多吃菜，少醬，健康滿分。"},
+        {name: "炸雞 (胖老爹/拿坡里)", budget: 2, people: [2,4], tags: ["heavy"], reason: "被披薩耽誤的炸雞店？"},
+        {name: "美式豬肋排", budget: 3, people: [2,4], tags: ["heavy", "drink"], reason: "吮指回味，醬料是靈魂。"},
+        {name: "西班牙燉飯", budget: 3, people: [2,4], tags: ["heavy"], reason: "海鮮與番紅花的交響曲。"},
+
+        // === 異國料理 (韓泰越港) ===
+        {name: "韓式炸雞", budget: 2, people: [2,4], tags: ["heavy", "drink"], reason: "甜辣醬汁配啤酒 (Chimaek)。"},
+        {name: "韓式烤肉", budget: 3, people: [2,4], tags: ["heavy", "drink"], reason: "五花肉包生菜，大蒜不能少。"},
+        {name: "石鍋拌飯 / 豆腐鍋", budget: 2, people: [1,2], tags: ["heavy", "soup"], reason: "滋滋作響的鍋巴。"},
+        {name: "泰式料理 (合菜)", budget: 3, people: [4], tags: ["heavy", "drink"], reason: "月亮蝦餅、打拋豬，白飯殺手。"},
+        {name: "泰式船麵 / 米粉湯", budget: 1, people: [1,2], tags: ["soup"], reason: "酸辣湯頭，彷彿置身曼谷。"},
+        {name: "越南河粉 (Pho)", budget: 2, people: [1,2], tags: ["soup", "light"], reason: "清甜牛骨湯，擠點檸檬更棒。"},
+        {name: "越南法國麵包", budget: 1, people: [1], tags: ["quick", "light"], reason: "外酥內軟，餡料豐富。"},
+        {name: "港式飲茶 (點心)", budget: 3, people: [2,4], tags: ["light"], reason: "一盅兩件，燒賣蝦餃鳳爪。"},
+        {name: "港式燒臘 / 煲仔飯", budget: 2, people: [1,2], tags: ["heavy"], reason: "鍋巴焦香，淋上甜醬油。"},
+        {name: "印度咖哩 + 烤餅", budget: 2, people: [2,4], tags: ["heavy"], reason: "香料層次豐富，用手撕餅吃才對味。"},
+
+        // === 鐵板燒 / 熱炒 / 合菜 ===
+        {name: "平價鐵板燒", budget: 2, people: [1,2,4], tags: ["heavy", "quick"], reason: "看師傅炒菜很療癒，白飯殺手。"},
+        {name: "高級鐵板燒", budget: 4, people: [2], tags: ["heavy"], reason: "視覺與味覺的饗宴，龍蝦和牛。"},
+        {name: "台式熱炒 100", budget: 2, people: [4], tags: ["heavy", "drink"], reason: "吵雜的環境，龍珠蚵仔酥必點。"},
+        {name: "客家菜", budget: 3, people: [4], tags: ["heavy"], reason: "鹹香油肥，薑絲大腸、客家小炒。"},
+        {name: "眷村菜", budget: 3, people: [4], tags: ["heavy"], reason: "懷舊滋味，獅子頭滷味拼盤。"},
+
+        // === 健康 / 素食 / 特殊 ===
+        {name: "健康水煮餐 / 舒肥餐", budget: 2, people: [1], tags: ["light", "quick"], reason: "為了身材，今晚忍耐一下。"},
+        {name: "Poke (夏威夷拌飯)", budget: 2, people: [1,2], tags: ["light", "quick"], reason: "原型食物，色彩繽紛又健康。"},
+        {name: "素食自助餐", budget: 1, people: [1,2], tags: ["light", "quick"], reason: "偶爾吃素，體內環保一下。"},
+        {name: "沙拉 (Salad)", budget: 2, people: [1], tags: ["light", "quick"], reason: "像隻羊一樣吃草，清爽無負擔。"},
+
+        // === 亂入 / 甜點當正餐 ===
+        {name: "便利商店 (微波食品)", budget: 1, people: [1], tags: ["quick"], reason: "不知道吃什麼時的最後堡壘。"},
+        {name: "泡麵 / 快煮麵", budget: 1, people: [1], tags: ["quick", "heavy"], reason: "加顆蛋加把菜，也是豪華的一餐。"},
+        {name: "刨冰 / 雪花冰", budget: 1, people: [2,4], tags: ["sweet"], reason: "天氣太熱吃不下，吃冰就飽了。"},
+        {name: "豆花 + 雞蛋糕", budget: 1, people: [1,2], tags: ["sweet"], reason: "甜食有另一個胃，但今天當正餐。"},
+        {name: "舒芙蕾鬆餅", budget: 2, people: [2], tags: ["sweet"], reason: "雲朵般的口感，少女心爆發。"},
+    ];
+
+    function startRecommend() {
+        const btn = document.querySelector('.btn-main');
+        const resArea = document.getElementById('result-area');
+        const resName = document.getElementById('res-name');
+        const resReason = document.getElementById('res-reason');
+        const resTag = document.getElementById('res-tag');
+
+        // 取得輸入
+        const budget = parseInt(document.getElementById('budget').value);
+        const people = parseInt(document.getElementById('people').value);
+        const vibe = document.getElementById('vibe').value;
+
+        btn.innerText = "運算中...";
+        resArea.style.display = 'none';
+
+        // 篩選邏輯
+        let candidates = foodDatabase.filter(item => {
+            // 1. 預算篩選 (寬容度: 推薦不超過預算的，但如果是選最高預算則全包)
+            const budgetMatch = (budget === 4) ? true : (item.budget <= budget + 1); // 稍微寬容一點
+            
+            // 2. 人數篩選 (必須包含該人數選項)
+            const peopleMatch = item.people.includes(people);
+
+            // 3. 標籤篩選 (如果是 random 則略過)
+            const vibeMatch = (vibe === 'random') ? true : item.tags.includes(vibe);
+
+            return budgetMatch && peopleMatch && vibeMatch;
+        });
+
+        // 如果篩選結果太少(0個)，啟動放寬機制
+        if (candidates.length === 0) {
+            candidates = foodDatabase.filter(item => item.people.includes(people)); // 只堅持人數
+            resReason.innerText = "條件太嚴苛啦！系統已啟動隨機推薦模式...";
+        }
+
+        // 動畫效果 (假裝在跑)
+        let count = 0;
+        const maxCount = 15;
+        const interval = setInterval(() => {
+            resArea.style.display = 'block';
+            const randomTemp = foodDatabase[Math.floor(Math.random() * foodDatabase.length)];
+            resName.innerText = randomTemp.name;
+            resReason.innerText = "分析大數據中...";
+            resTag.innerText = "Scanning...";
+            count++;
+
+            if (count >= maxCount) {
+                clearInterval(interval);
+                // 最終結果
+                const finalPick = candidates[Math.floor(Math.random() * candidates.length)];
+                
+                resName.innerText = finalPick.name;
+                resReason.innerText = finalPick.reason;
+                resTag.innerText = `預算等級:${"$$$$".slice(0, finalPick.budget)}`;
+                btn.innerText = "不滿意？再算一次";
+            }
+        }, 100);
+    }
+</script>
+
+</body>
+</html>
